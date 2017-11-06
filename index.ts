@@ -9,7 +9,7 @@ const remoteUrl = 'http://20705-presscdn-pagely.netdna-ssl.com/wp-content/upload
 
 async function imageSizeLocal() {
     try {
-        console.log('image-size')
+        console.log('image-size local')
         const dimensions = await sizeOf(localPath)
         console.log(dimensions.width, dimensions.height)
     } catch (err) {
@@ -25,25 +25,38 @@ function imageSizeRemote() {
         chunks.push(chunk)
       }).on('end', function() {
         var buffer = Buffer.concat(chunks)
+
+        // Allegedly can check the buffer lengths & stop downloading the image after a few kilobytes
+        // No need to download the entire image
         console.log(`image-size remote ${JSON.stringify(sizeOf(buffer))}`)
       });
     });
 }
 
 function jimpLocal() {
-    console.log('jimp')
-    jimp.read(localPath)
-        .then(function (img: jimp) {
-            console.log(img.bitmap.width, img.bitmap.height)
-        }).catch(function (err: Error) {
-            console.error(err)
-        });
+    console.log('jimp local')
+    doJimp(localPath)
 }
 
-async function doThing() {
+function jimpRemote() {
+    console.log('jimp remote')
+    doJimp(remoteUrl)
+}
+
+function doJimp(path: string) {
+    jimp.read(path)
+    .then(function (img: jimp) {
+        console.log(img.bitmap.width, img.bitmap.height)
+    }).catch(function (err: Error) {
+        console.error(err)
+    })
+}
+
+async function testAll() {
     await imageSizeLocal()
     imageSizeRemote()
 
     jimpLocal()
+    jimpRemote()
 }
-doThing()
+testAll()
