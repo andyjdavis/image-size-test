@@ -9,9 +9,8 @@ const remoteUrl = 'http://20705-presscdn-pagely.netdna-ssl.com/wp-content/upload
 
 async function imageSizeLocal() {
     try {
-        console.log('image-size local')
         const dimensions = await sizeOf(localPath)
-        console.log(dimensions.width, dimensions.height)
+        console.log('image-size local', dimensions.width, dimensions.height)
     } catch (err) {
         console.error(err)
     }
@@ -34,19 +33,17 @@ function imageSizeRemote() {
 }
 
 function jimpLocal() {
-    console.log('jimp local')
-    doJimp(localPath)
+    doJimp(localPath, 'local')
 }
 
 function jimpRemote() {
-    console.log('jimp remote')
-    doJimp(remoteUrl)
+    doJimp(remoteUrl, 'remote')
 }
 
-function doJimp(path: string) {
+function doJimp(path: string, desc: string) {
     jimp.read(path)
     .then(function (img: jimp) {
-        console.log(img.bitmap.width, img.bitmap.height)
+        console.log(`jimp ${desc}`, img.bitmap.width, img.bitmap.height)
     }).catch(function (err: Error) {
         console.error(err)
     })
